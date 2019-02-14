@@ -6,7 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from sklearn.externals import joblib
 
-from resolve import paths
+from gamesbiz.resolve import paths
 
 
 def read_config_file(config_json):
