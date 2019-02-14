@@ -6,7 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from sklearn.externals import joblib
 
-from gamesbiz.resolve import paths
+from resolve import paths
 
 
 def read_config_file(config_json):
@@ -68,8 +68,10 @@ def entry_point():
 
     # define model parameters
     RUN_NAME = "run 1 with 20 nodes"
-    learning_rate = float(hyper_params['learning_rate'])
-    training_epochs = int(hyper_params['training_epochs'])
+    learning_rate = 0.005
+    training_epochs = 10
+    #learning_rate = float(hyper_params['learning_rate'])
+    #training_epochs = int(hyper_params['training_epochs'])
 
 
     # define the number of inputs and outputs in the neural network
@@ -77,9 +79,9 @@ def entry_point():
     number_of_outputs = 1
 
     # how many neurons do we want in each layer of the network
-    layer_1_nodes = int(hyper_params['layer_1_nodes'])
-    layer_2_nodes = int(hyper_params['layer_2_nodes'])
-    layer_3_nodes = int(hyper_params['layer_3_nodes'])
+    layer_1_nodes = 32 #int(hyper_params['layer_1_nodes'])
+    layer_2_nodes = 64 # int(hyper_params['layer_2_nodes'])
+    layer_3_nodes = 32  #int(hyper_params['layer_3_nodes'])
 
     # section one: define the layers of the NN itself
     # input layer
