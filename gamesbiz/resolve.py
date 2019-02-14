@@ -1,7 +1,7 @@
 import os
 import types
 
-import data as location
+import gamesbiz.data as location
 
 
 class resource(object):
