@@ -60,7 +60,8 @@ def transformation():
         prediction = predictions['earnings'][0][0]
 
         Y_scaler = joblib.load(os.path.join(paths.model('Y_scaler.save')))
-        true_prediction = {'earnings': round((float(prediction) - Y_scaler.min_[0]) / Y_scaler.scale_[0], 3)}
+        true_prediction = {'earnings': round(
+            (float(prediction) - Y_scaler.min_[0]) / Y_scaler.scale_[0], 3)}
         true_prediction = json.dumps(true_prediction)
     else:
         return flask.Response(response='This predictor only supports JSON data', status=415, mimetype='text/plain')
