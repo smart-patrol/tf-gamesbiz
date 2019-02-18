@@ -69,19 +69,18 @@ def entry_point():
     # define model parameters
     RUN_NAME = "run 1 with 20 nodes"
     learning_rate = 0.005
-    training_epochs = 10
+    training_epochs = 20
     #learning_rate = float(hyper_params['learning_rate'])
     #training_epochs = int(hyper_params['training_epochs'])
-
 
     # define the number of inputs and outputs in the neural network
     number_of_inputs = 9
     number_of_outputs = 1
 
     # how many neurons do we want in each layer of the network
-    layer_1_nodes = 32 #int(hyper_params['layer_1_nodes'])
-    layer_2_nodes = 64 # int(hyper_params['layer_2_nodes'])
-    layer_3_nodes = 32  #int(hyper_params['layer_3_nodes'])
+    layer_1_nodes = 32  # int(hyper_params['layer_1_nodes'])
+    layer_2_nodes = 64  # int(hyper_params['layer_2_nodes'])
+    layer_3_nodes = 32  # int(hyper_params['layer_3_nodes'])
 
     # section one: define the layers of the NN itself
     # input layer
@@ -90,29 +89,34 @@ def entry_point():
 
     # layer 1
     with tf.variable_scope('layer_1'):
-        weights = tf.get_variable(name='weights1', shape=[number_of_inputs, layer_1_nodes], initializer=tf.contrib.layers.xavier_initializer())
-        biases = tf.get_variable(name='biases1', shape=[layer_1_nodes], initializer=tf.zeros_initializer())
+        weights = tf.get_variable(name='weights1', shape=[
+                                  number_of_inputs, layer_1_nodes], initializer=tf.contrib.layers.xavier_initializer())
+        biases = tf.get_variable(name='biases1', shape=[
+                                 layer_1_nodes], initializer=tf.zeros_initializer())
         layer_1_outputs = tf.nn.relu(tf.add(tf.matmul(X, weights), biases))
 
     # layer 2
     with tf.variable_scope('layer_2'):
         weights = tf.get_variable(name='weights2', shape=[layer_1_nodes, layer_2_nodes],
                                   initializer=tf.contrib.layers.xavier_initializer())
-        biases = tf.get_variable(name='biases2', shape=[layer_2_nodes], initializer=tf.zeros_initializer())
+        biases = tf.get_variable(name='biases2', shape=[
+                                 layer_2_nodes], initializer=tf.zeros_initializer())
         layer_2_outputs = tf.nn.relu(tf.add(tf.matmul(layer_1_outputs, weights), biases))
 
     # layer 3
     with tf.variable_scope('layer_3'):
         weights = tf.get_variable(name='weights3', shape=[layer_2_nodes, layer_3_nodes],
                                   initializer=tf.contrib.layers.xavier_initializer())
-        biases = tf.get_variable(name='biases3', shape=[layer_3_nodes], initializer=tf.zeros_initializer())
+        biases = tf.get_variable(name='biases3', shape=[
+                                 layer_3_nodes], initializer=tf.zeros_initializer())
         layer_3_outputs = tf.nn.relu(tf.add(tf.matmul(layer_2_outputs, weights), biases))
 
     # output layer
     with tf.variable_scope('output'):
         weights = tf.get_variable(name='weights4', shape=[layer_3_nodes, number_of_outputs],
                                   initializer=tf.contrib.layers.xavier_initializer())
-        biases = tf.get_variable(name='biases4', shape=[number_of_outputs], initializer=tf.zeros_initializer())
+        biases = tf.get_variable(name='biases4', shape=[
+                                 number_of_outputs], initializer=tf.zeros_initializer())
         prediction = tf.nn.relu(tf.add(tf.matmul(layer_3_outputs, weights), biases))
 
     # cost function with scalar output
@@ -137,8 +141,10 @@ def entry_point():
         # initialize all wa
         session.run(tf.global_variables_initializer())
 
-        training_writer = tf.summary.FileWriter(paths.output('./logs/{}/training'.format(RUN_NAME)), session.graph)
-        testing_writer = tf.summary.FileWriter(paths.output('./logs/{}/testing'.format(RUN_NAME)), session.graph)
+        training_writer = tf.summary.FileWriter(paths.output(
+            './logs/{}/training'.format(RUN_NAME)), session.graph)
+        testing_writer = tf.summary.FileWriter(paths.output(
+            './logs/{}/testing'.format(RUN_NAME)), session.graph)
 
         for epoch in range(training_epochs):
             session.run(optimizer, feed_dict={X: X_scaled_training, Y: Y_scaled_training})
@@ -152,7 +158,7 @@ def entry_point():
 
                 # write out training cost and testing cost per epoch to be read into dynamo later
                 per_epoch_cost = {
-                   epoch: {"training_cost": str(training_cost), "testing_cost": str(testing_cost)}
+                    epoch: {"training_cost": str(training_cost), "testing_cost": str(testing_cost)}
                 }
 
                 master_cost_holder.update(per_epoch_cost)
@@ -160,7 +166,8 @@ def entry_point():
                 training_writer.add_summary(training_summary, epoch)
                 testing_writer.add_summary(testing_summary, epoch)
 
-        final_training_cost = session.run(cost, feed_dict={X: X_scaled_training, Y: Y_scaled_training})
+        final_training_cost = session.run(
+            cost, feed_dict={X: X_scaled_training, Y: Y_scaled_training})
         final_testing_cost = session.run(cost, feed_dict={X: X_scaled_testing, Y: Y_scaled_testing})
 
         print("Final Training Cost: {}".format(final_training_cost))
@@ -199,7 +206,8 @@ def entry_point():
 
         model_builder.add_meta_graph_and_variables(
             session,
-            signature_def_map={tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: signature_def},
+            signature_def_map={
+                tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: signature_def},
             tags=[tf.saved_model.tag_constants.SERVING]
         )
         model_builder.save()
